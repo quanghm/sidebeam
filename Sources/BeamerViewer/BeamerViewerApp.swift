@@ -40,6 +40,7 @@ struct BeamerViewerApp: App {
         }
         .defaultSize(width: 1200, height: 700)
         .commands {
+            CommandGroup(replacing: .newItem) { }
             CommandGroup(replacing: .appInfo) {
                 Button("About Beamer Viewer") {
                     AboutWindowManager.show()
