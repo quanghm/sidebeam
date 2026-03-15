@@ -46,7 +46,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         // App menu
         let appMenu = NSMenu()
-        appMenu.addItem(withTitle: "About Beamer Viewer", action: nil, keyEquivalent: "")
+        appMenu.addItem(withTitle: "About Beamer Viewer", action: #selector(showAbout), keyEquivalent: "")
         appMenu.addItem(.separator())
         appMenu.addItem(withTitle: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         let appMenuItem = NSMenuItem()
@@ -69,6 +69,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         mainMenu.addItem(helpMenuItem)
 
         NSApp.mainMenu = mainMenu
+    }
+
+    @objc private func showAbout() {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "dev"
+        let alert = NSAlert()
+        alert.messageText = "Beamer Viewer"
+        alert.informativeText = """
+        Version \(version)
+
+        A native macOS PDF presenter console for Beamer slides.
+
+        Author: Quang Hoang <quanghm@gmail.com>
+        """
+        alert.alertStyle = .informational
+        alert.runModal()
     }
 
     @objc private func openAction() {

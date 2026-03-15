@@ -8,6 +8,7 @@ let package = Package(
         .executableTarget(
             name: "BeamerViewer",
             path: "Sources/BeamerViewer",
+            exclude: ["Info.plist"],
             linkerSettings: [
                 .unsafeFlags(["-Xlinker", "-framework", "-Xlinker", "Quartz"]),
             ]
