@@ -100,9 +100,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
 
         let bindings: [(String, String)] = [
-            ("→  ↓  Space  j  l", "Next slide"),
-            ("←  ↑  PgUp", "Previous slide"),
-            ("PgDn", "Next slide"),
+            ("→  ↓  Space  l  PgDn", "Next slide"),
+            ("←  ↑  k  PgUp", "Previous slide"),
             ("Home", "First slide"),
             ("End", "Last slide"),
             ("g + number + Enter", "Go to slide"),
@@ -290,8 +289,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         // Character-based shortcuts
         guard let chars = event.characters else { return event }
         switch chars {
-        case "j", "l":
+        case "l":
             slideManager.next()
+            projectorWindow?.updateSlide()
+            return nil
+        case "k":
+            slideManager.previous()
             projectorWindow?.updateSlide()
             return nil
         case "h":

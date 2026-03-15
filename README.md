@@ -50,8 +50,8 @@ open .build/BeamerViewer.app
 
 | Key | Action |
 |---|---|
-| `→` `↓` `Space` `PgDn` `j` `l` | Next slide |
-| `←` `↑` `PgUp` | Previous slide |
+| `→` `↓` `Space` `PgDn` `l` | Next slide |
+| `←` `↑` `PgUp` `k` | Previous slide |
 | `Home` | First slide |
 | `End` | Last slide |
 | `g` + number + `Enter` | Go to slide |
