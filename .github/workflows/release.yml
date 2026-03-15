@@ -27,9 +27,27 @@ jobs:
       - name: Zip .app bundle
         run: cd .build && zip -r BeamerViewer-${{ steps.version.outputs.version }}-macos.zip BeamerViewer.app
 
+      - name: Compute SHA256
+        id: sha
+        run: echo "sha256=$(shasum -a 256 .build/BeamerViewer-${{ steps.version.outputs.version }}-macos.zip | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: Beamer Viewer v${{ steps.version.outputs.version }}
           generate_release_notes: true
           files: .build/BeamerViewer-${{ steps.version.outputs.version }}-macos.zip
+
+      - name: Update Homebrew cask
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          git clone https://x-access-token:${GH_TOKEN}@github.com/quanghm/homebrew-beamer-viewer.git /tmp/homebrew-tap
+          cd /tmp/homebrew-tap
+          sed -i '' "s/version \".*\"/version \"${{ steps.version.outputs.version }}\"/" Casks/beamer-viewer.rb
+          sed -i '' "s/sha256 \".*\"/sha256 \"${{ steps.sha.outputs.sha256 }}\"/" Casks/beamer-viewer.rb
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Casks/beamer-viewer.rb
+          git commit -m "Bump to v${{ steps.version.outputs.version }}"
+          git push
