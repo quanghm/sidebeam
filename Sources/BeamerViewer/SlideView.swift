@@ -25,6 +25,10 @@ struct SlideView: View {
             let offsetX = (size.width - scaledWidth) / 2
             let offsetY = (size.height - scaledHeight) / 2
 
+            // White "paper" background for the PDF content area
+            let pageFrame = CGRect(x: offsetX, y: offsetY, width: scaledWidth, height: scaledHeight)
+            context.fill(Path(pageFrame), with: .color(.white))
+
             // Render PDF page
             context.drawLayer { ctx in
                 ctx.withCGContext { cgContext in
@@ -40,7 +44,6 @@ struct SlideView: View {
             }
 
             // Border around the rendered page area
-            let pageFrame = CGRect(x: offsetX, y: offsetY, width: scaledWidth, height: scaledHeight)
             context.stroke(Path(roundedRect: pageFrame, cornerRadius: 2),
                           with: .color(.gray.opacity(0.3)),
                           lineWidth: 1)

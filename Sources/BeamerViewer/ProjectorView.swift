@@ -15,6 +15,7 @@ struct ProjectorView: View {
                 )
             }
         }
+        .background(.black)
         .ignoresSafeArea()
     }
 }

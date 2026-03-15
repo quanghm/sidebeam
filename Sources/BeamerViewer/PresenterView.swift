@@ -32,6 +32,15 @@ struct PresenterView: View {
             bottomBar
         }
         .padding(8)
+        #if os(iOS)
+        .gesture(
+            DragGesture(minimumDistance: 50)
+                .onEnded { value in
+                    if value.translation.width < -50 { manager.next() }
+                    else if value.translation.width > 50 { manager.previous() }
+                }
+        )
+        #endif
         .onAppear { startTimer() }
         .onDisappear { stopTimer() }
     }

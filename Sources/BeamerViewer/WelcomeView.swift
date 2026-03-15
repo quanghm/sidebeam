@@ -45,7 +45,7 @@ struct WelcomeView: View {
 
                     ForEach(Array(recentFiles.files.enumerated()), id: \.element.id) { index, file in
                         Button {
-                            onOpen(file.url)
+                            if let url = file.url { onOpen(url) }
                         } label: {
                             HStack(spacing: 10) {
                                 Text(hotkeyLabel(for: index))

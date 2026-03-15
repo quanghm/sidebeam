@@ -23,7 +23,12 @@ final class SlideManager {
     }
 
     func load(url: URL) -> Bool {
-        guard let doc = PDFDocument(url: url) else { return false }
+        let accessing = url.startAccessingSecurityScopedResource()
+        defer { if accessing { url.stopAccessingSecurityScopedResource() } }
+
+        // Copy data so we don't hold the security scope
+        guard let data = try? Data(contentsOf: url),
+              let doc = PDFDocument(data: data) else { return false }
         pdfDocument = doc
         pageCount = doc.pageCount
         currentIndex = 0
