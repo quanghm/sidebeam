@@ -157,7 +157,7 @@ private struct BeamerSetupTab: View {
                 }
 
                 HelpSection(icon: "wand.and.stars", title: "Auto-Detection") {
-                    Text("Beamer Viewer automatically detects wide pages (~2:1 aspect ratio) and splits them.")
+                    Text("SideBeam automatically detects wide pages (~2:1 aspect ratio) and splits them.")
                     Text("Press **s** to cycle split modes: **none → right → left**.")
                 }
 
@@ -175,7 +175,7 @@ private struct BeamerSetupTab: View {
                 }
 
                 HelpSection(icon: "doc.richtext", title: "Regular PDFs") {
-                    Text("Beamer Viewer works with **any PDF** — not just Beamer presentations. Split mode is set to **none** automatically for regular PDFs.")
+                    Text("SideBeam works with **any PDF** — not just Beamer presentations. Split mode is set to **none** automatically for regular PDFs.")
                 }
             }
             .padding()
@@ -198,7 +198,7 @@ private struct SupportTab: View {
                 .font(.system(size: 48))
                 .foregroundColor(.accentColor)
 
-            Text("Beamer Viewer")
+            Text("SideBeam")
                 .font(.title2)
                 .fontWeight(.semibold)
 
@@ -212,13 +212,13 @@ private struct SupportTab: View {
             Divider().padding(.horizontal, 40)
 
             VStack(spacing: 10) {
-                Link(destination: URL(string: "https://quanghm.github.io/beamer-viewer/")!) {
+                Link(destination: URL(string: "https://quanghm.github.io/sidebeam/")!) {
                     Label("Online Documentation", systemImage: "globe")
                 }
-                Link(destination: URL(string: "https://github.com/quanghm/beamer-viewer")!) {
+                Link(destination: URL(string: "https://github.com/quanghm/sidebeam")!) {
                     Label("GitHub — Source Code", systemImage: "chevron.left.forwardslash.chevron.right")
                 }
-                Link(destination: URL(string: "https://github.com/quanghm/beamer-viewer/issues")!) {
+                Link(destination: URL(string: "https://github.com/quanghm/sidebeam/issues")!) {
                     Label("Report a Bug", systemImage: "ladybug")
                 }
             }

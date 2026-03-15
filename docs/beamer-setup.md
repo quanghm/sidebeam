@@ -20,7 +20,7 @@ This produces wide PDF pages with the slide on the left half and notes on the ri
 
 ## Auto-Detection
 
-Beamer Viewer automatically detects wide pages (~2:1 aspect ratio) and splits them into slide and notes halves. No configuration needed — just open the PDF.
+SideBeam automatically detects wide pages (~2:1 aspect ratio) and splits them into slide and notes halves. No configuration needed — just open the PDF.
 
 If detection is wrong, press **s** to cycle split modes manually:
 - **none** — show full page
@@ -62,4 +62,4 @@ To add notes to every slide, you can use:
 
 ## Regular PDFs
 
-Beamer Viewer works with any PDF — not just Beamer presentations. For regular PDFs, the presenter shows the full page with next slide preview. Split mode is set to **none** automatically.
+SideBeam works with any PDF — not just Beamer presentations. For regular PDFs, the presenter shows the full page with next slide preview. Split mode is set to **none** automatically.

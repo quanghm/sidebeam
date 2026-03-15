@@ -3,7 +3,7 @@ layout: home
 title: Home
 ---
 
-# Beamer Viewer
+# SideBeam
 
 A native macOS/iOS PDF presenter console, inspired by [pdfpc](https://pdfpc.github.io/).
 
@@ -24,25 +24,25 @@ Automatically splits wide Beamer pages into slide and notes halves, with a full 
 ### Homebrew (recommended)
 
 ```bash
-brew tap quanghm/beamer-viewer
-brew install --cask beamer-viewer
+brew tap quanghm/sidebeam
+brew install --cask sidebeam
 ```
 
 ### Manual Download
 
-Download the latest `.app` from [GitHub Releases](https://github.com/quanghm/beamer-viewer/releases), unzip, and run:
+Download the latest `.app` from [GitHub Releases](https://github.com/quanghm/sidebeam/releases), unzip, and run:
 
 ```bash
-xattr -cr BeamerViewer.app
+xattr -cr SideBeam.app
 ```
 
 ### Build from Source
 
 ```bash
-git clone https://github.com/quanghm/beamer-viewer.git
-cd beamer-viewer
+git clone https://github.com/quanghm/sidebeam.git
+cd sidebeam
 swift build
-swift run BeamerViewer
+swift run SideBeam
 ```
 
 ## Quick Start

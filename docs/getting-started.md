@@ -8,7 +8,7 @@ title: Getting Started
 Click **Open PDF…** on the welcome screen, or press **⌘O**. You can also pass a file path as a command-line argument:
 
 ```bash
-BeamerViewer presentation.pdf
+SideBeam presentation.pdf
 ```
 
 Recent files appear on the welcome screen — press **1**–**9** or **0** to open them quickly.
@@ -46,7 +46,7 @@ The timer pill turns yellow when paused.
 
 ## Split Mode
 
-Beamer Viewer auto-detects wide PDF pages with embedded notes (from LaTeX Beamer's `show notes on second screen` option).
+SideBeam auto-detects wide PDF pages with embedded notes (from LaTeX Beamer's `show notes on second screen` option).
 
 Press **s** to cycle split modes:
 - **none** — show full page (for regular PDFs)

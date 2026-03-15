@@ -2,17 +2,17 @@
 set -euo pipefail
 
 VERSION="${1:-0.0.1}"
-APP_DIR="$(pwd)/.build/BeamerViewer.app"
+APP_DIR="$(pwd)/.build/SideBeam.app"
 
-echo "Building Beamer Viewer v${VERSION}..."
+echo "Building SideBeam v${VERSION}..."
 
 # Try universal binary (needs full Xcode), fall back to native arch
 if swift build -c release --arch arm64 --arch x86_64 2>/dev/null; then
-    BINARY="$(pwd)/.build/apple/Products/Release/BeamerViewer"
+    BINARY="$(pwd)/.build/apple/Products/Release/SideBeam"
 else
     echo "Universal build unavailable, building native arch only..."
     swift build -c release
-    BINARY="$(pwd)/.build/release/BeamerViewer"
+    BINARY="$(pwd)/.build/release/SideBeam"
 fi
 
 # Create .app bundle
@@ -33,7 +33,7 @@ echo -n "APPL????" > "$APP_DIR/Contents/PkgInfo"
 if [ -f AppIcon.icns ]; then
     cp AppIcon.icns "$APP_DIR/Contents/Resources/"
 elif command -v rsvg-convert &>/dev/null && [ -f icon-dark.svg ]; then
-    ICONSET="$(pwd)/.build/BeamerViewer.iconset"
+    ICONSET="$(pwd)/.build/SideBeam.iconset"
     mkdir -p "$ICONSET"
     for size in 16 32 128 256 512; do
         rsvg-convert -w "$size" -h "$size" icon-dark.svg -o "$ICONSET/icon_${size}x${size}.png"
@@ -48,4 +48,4 @@ codesign --force --deep -s - "$APP_DIR"
 
 echo "Built: $APP_DIR"
 echo "Version: $VERSION"
-file "$APP_DIR/Contents/MacOS/BeamerViewer"
+file "$APP_DIR/Contents/MacOS/SideBeam"

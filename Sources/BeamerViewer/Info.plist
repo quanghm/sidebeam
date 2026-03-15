@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>Beamer Viewer</string>
+    <string>SideBeam</string>
     <key>CFBundleDisplayName</key>
-    <string>Beamer Viewer</string>
+    <string>SideBeam</string>
     <key>CFBundleIdentifier</key>
-    <string>com.quanghm.beamer-viewer</string>
+    <string>com.quanghm.sidebeam</string>
     <key>CFBundleVersion</key>
     <string>VERSION</string>
     <key>CFBundleShortVersionString</key>
     <string>VERSION</string>
     <key>CFBundleExecutable</key>
-    <string>BeamerViewer</string>
+    <string>SideBeam</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundlePackageType</key>

@@ -11,7 +11,7 @@ struct AboutView: View {
                 .font(.system(size: 48))
                 .foregroundStyle(.teal)
 
-            Text("Beamer Viewer")
+            Text("SideBeam")
                 .font(.title2)
                 .fontWeight(.semibold)
 
@@ -24,7 +24,7 @@ struct AboutView: View {
 
             Divider().padding(.horizontal, 20)
 
-            Link("Online Help", destination: URL(string: "https://quanghm.github.io/beamer-viewer/")!)
+            Link("Online Help", destination: URL(string: "https://quanghm.github.io/sidebeam/")!)
                 .font(.callout)
 
             Divider().padding(.horizontal, 20)

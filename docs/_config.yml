@@ -1,8 +1,8 @@
-title: Beamer Viewer
+title: SideBeam
 description: Native macOS/iOS PDF presenter console for Beamer slides
 theme: minima
 url: https://quanghm.github.io
-baseurl: /beamer-viewer
+baseurl: /sidebeam
 
 header_pages:
   - index.md

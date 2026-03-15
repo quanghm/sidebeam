@@ -5,12 +5,24 @@ struct WelcomeView: View {
 
     @State private var showFilePicker = false
     @State private var showHelp = false
+    @State private var showSponsor = false
     var recentFiles = RecentFiles.shared
 
     var body: some View {
         VStack(spacing: 0) {
             HStack {
+                Button {
+                    showSponsor = true
+                } label: {
+                    Image(systemName: "heart")
+                        .font(.title2)
+                        .foregroundColor(.pink.opacity(0.6))
+                }
+                .buttonStyle(.plain)
+                .padding()
+
                 Spacer()
+
                 Button {
                     showHelp = true
                 } label: {
@@ -29,7 +41,7 @@ struct WelcomeView: View {
                 Image(systemName: "doc.richtext")
                     .font(.system(size: 64))
                     .foregroundColor(.accentColor)
-                Text("Beamer Viewer")
+                Text("SideBeam")
                     .font(.largeTitle)
                     .fontWeight(.semibold)
                 Text("Open a PDF to start presenting")
@@ -121,6 +133,12 @@ struct WelcomeView: View {
             HelpView()
                 .frame(minWidth: 550, minHeight: 500)
             #endif
+        }
+        .alert("Support SideBeam", isPresented: $showSponsor) {
+            Link("Sponsor on GitHub", destination: URL(string: "https://github.com/sponsors/quanghm")!)
+            Button("Not now", role: .cancel) { }
+        } message: {
+            Text("SideBeam is free and open source. If you find it useful, consider sponsoring the project!")
         }
     }
 

@@ -32,18 +32,18 @@ jobs:
         run: bash scripts/build-app.sh "${{ steps.version.outputs.version }}"
 
       - name: Zip .app bundle
-        run: cd .build && zip -r BeamerViewer-${{ steps.version.outputs.version }}-macos.zip BeamerViewer.app
+        run: cd .build && zip -r SideBeam-${{ steps.version.outputs.version }}-macos.zip SideBeam.app
 
       - name: Compute SHA256
         id: sha
-        run: echo "sha256=$(shasum -a 256 .build/BeamerViewer-${{ steps.version.outputs.version }}-macos.zip | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+        run: echo "sha256=$(shasum -a 256 .build/SideBeam-${{ steps.version.outputs.version }}-macos.zip | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: Beamer Viewer v${{ steps.version.outputs.version }}
+          name: SideBeam v${{ steps.version.outputs.version }}
           generate_release_notes: true
-          files: .build/BeamerViewer-${{ steps.version.outputs.version }}-macos.zip
+          files: .build/SideBeam-${{ steps.version.outputs.version }}-macos.zip
 
   update-cask:
     needs: build
@@ -53,12 +53,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
         run: |
-          git clone https://x-access-token:${GH_TOKEN}@github.com/quanghm/homebrew-beamer-viewer.git /tmp/homebrew-tap
+          git clone https://x-access-token:${GH_TOKEN}@github.com/quanghm/homebrew-sidebeam.git /tmp/homebrew-tap
           cd /tmp/homebrew-tap
-          sed -i "s/version \".*\"/version \"${{ needs.build.outputs.version }}\"/" Casks/beamer-viewer.rb
-          sed -i "s/sha256 \".*\"/sha256 \"${{ needs.build.outputs.sha256 }}\"/" Casks/beamer-viewer.rb
+          sed -i "s/version \".*\"/version \"${{ needs.build.outputs.version }}\"/" Casks/sidebeam.rb
+          sed -i "s/sha256 \".*\"/sha256 \"${{ needs.build.outputs.sha256 }}\"/" Casks/sidebeam.rb
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Casks/beamer-viewer.rb
+          git add Casks/sidebeam.rb
           git commit -m "Bump to v${{ needs.build.outputs.version }}"
           git push

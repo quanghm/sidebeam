@@ -11,7 +11,7 @@ extension Notification.Name {
 }
 
 @main
-struct BeamerViewerApp: App {
+struct SideBeamApp: App {
     @State private var manager = SlideManager()
     @State private var hasDocument = false
     @State private var projectorManager = ProjectorWindowManager()
@@ -43,12 +43,12 @@ struct BeamerViewerApp: App {
         .commands {
             CommandGroup(replacing: .newItem) { }
             CommandGroup(replacing: .appInfo) {
-                Button("About Beamer Viewer") {
+                Button("About SideBeam") {
                     AboutWindowManager.show()
                 }
             }
             CommandGroup(replacing: .help) {
-                Button("Beamer Viewer Help") {
+                Button("SideBeam Help") {
                     HelpWindowManager.show()
                 }
                 Button("Key Bindings") {
@@ -96,7 +96,7 @@ final class ProjectorWindowManager: NSObject {
                 window.styleMask = [.titled, .closable, .resizable]
                 window.level = .normal
                 window.setFrame(NSRect(x: 200, y: 200, width: 800, height: 600), display: true)
-                window.title = "Beamer Viewer — Projector"
+                window.title = "SideBeam — Projector"
             }
             window.orderFront(nil)
             return
@@ -111,7 +111,7 @@ final class ProjectorWindowManager: NSObject {
             backing: .buffered,
             defer: false
         )
-        win.title = "Beamer Viewer — Projector"
+        win.title = "SideBeam — Projector"
         win.backgroundColor = .black
         win.contentViewController = hosting
         win.orderFront(nil)
@@ -135,7 +135,7 @@ final class ProjectorWindowManager: NSObject {
             win.styleMask = [.titled, .closable, .resizable]
             win.level = .normal
             win.setFrame(NSRect(x: 200, y: 200, width: 800, height: 600), display: true)
-            win.title = "Beamer Viewer — Projector"
+            win.title = "SideBeam — Projector"
         }
     }
 
@@ -188,7 +188,7 @@ final class ProjectorWindowManager: NSObject {
             win.styleMask = [.titled, .closable, .resizable]
             win.level = .normal
             win.setFrame(NSRect(x: 200, y: 200, width: 800, height: 600), display: true)
-            win.title = "Beamer Viewer — Projector"
+            win.title = "SideBeam — Projector"
             isCustomFullscreen = false
             NSApp.presentationOptions = []
         } else {
@@ -372,7 +372,7 @@ enum HelpWindowManager {
         )
         win.isReleasedWhenClosed = false  // Keep window alive after close
         win.contentViewController = hosting
-        win.title = "Beamer Viewer Help"
+        win.title = "SideBeam Help"
         win.center()
         win.makeKeyAndOrderFront(nil)
         window = win
@@ -399,7 +399,7 @@ enum AboutWindowManager {
         )
         win.isReleasedWhenClosed = false
         win.contentViewController = hosting
-        win.title = "About Beamer Viewer"
+        win.title = "About SideBeam"
         win.center()
         win.makeKeyAndOrderFront(nil)
         window = win
@@ -411,7 +411,7 @@ enum AboutWindowManager {
 import UIKit
 
 @main
-struct BeamerViewerApp: App {
+struct SideBeamApp: App {
     @State private var manager = SlideManager()
     @State private var hasDocument = false
     @State private var showKeyBindings = false

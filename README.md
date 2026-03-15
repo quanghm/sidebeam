@@ -1,4 +1,4 @@
-# Beamer Viewer
+# SideBeam
 
 Native macOS/iOS PDF presenter console, inspired by [pdfpc](https://pdfpc.github.io/). Built with SwiftUI and PDFKit.
 
@@ -26,36 +26,36 @@ Automatically splits wide Beamer pages (produced by `\setbeameroption{show notes
 ### Homebrew (recommended)
 
 ```bash
-brew tap quanghm/beamer-viewer
-brew install --cask beamer-viewer
+brew tap quanghm/sidebeam
+brew install --cask sidebeam
 ```
 
 ### Manual
 
-Download the latest `.app` from [Releases](https://github.com/quanghm/beamer-viewer/releases), unzip, and run:
+Download the latest `.app` from [Releases](https://github.com/quanghm/sidebeam/releases), unzip, and run:
 
 ```bash
-xattr -cr BeamerViewer.app   # remove quarantine on first run
+xattr -cr SideBeam.app   # remove quarantine on first run
 ```
 
 ## Build & Run
 
 ```bash
 swift build
-swift run BeamerViewer presentation.pdf
+swift run SideBeam presentation.pdf
 ```
 
 Or without arguments to open a file picker:
 
 ```bash
-swift run BeamerViewer
+swift run SideBeam
 ```
 
 To build a `.app` bundle:
 
 ```bash
 bash scripts/build-app.sh
-open .build/BeamerViewer.app
+open .build/SideBeam.app
 ```
 
 ## Key Bindings
@@ -90,8 +90,8 @@ open .build/BeamerViewer.app
 ## Architecture
 
 ```
-Sources/BeamerViewer/
-├── BeamerViewerApp.swift   # SwiftUI App + AppKit window/keyboard managers (macOS)
+Sources/SideBeam/
+├── SideBeamApp.swift   # SwiftUI App + AppKit window/keyboard managers (macOS)
 ├── MainView.swift          # Persistent container: switches between welcome/presenter
 ├── SlideManager.swift      # @Observable: PDF loading, navigation, split logic
 ├── SlideView.swift         # SwiftUI Canvas: PDF page rendering with crop
@@ -133,4 +133,4 @@ Add to your LaTeX preamble:
 \setbeameroption{show notes on second screen=right}
 ```
 
-This produces wide PDF pages with the slide on the left and notes on the right. Beamer Viewer detects this automatically.
+This produces wide PDF pages with the slide on the left and notes on the right. SideBeam detects this automatically.
