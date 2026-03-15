@@ -313,24 +313,144 @@ enum AboutWindowManager {
 }
 
 #else
-// iOS
+// iOS / iPadOS
+import UIKit
+
 @main
 struct BeamerViewerApp: App {
     @State private var manager = SlideManager()
     @State private var hasDocument = false
+    @State private var showKeyBindings = false
+    @State private var showAbout = false
+    @Environment(\.externalDisplayManager) private var externalDisplay
 
     var body: some Scene {
         WindowGroup {
-            if hasDocument {
-                PresenterView(manager: manager)
-            } else {
-                WelcomeView { url in
-                    if manager.load(url: url) {
-                        hasDocument = true
+            Group {
+                if hasDocument {
+                    PresenterView(manager: manager)
+                        .onAppear {
+                            ExternalDisplayObserver.shared.start(manager: manager)
+                        }
+                } else {
+                    WelcomeView { url in
+                        if manager.load(url: url) {
+                            hasDocument = true
+                        }
                     }
                 }
             }
+            .sheet(isPresented: $showKeyBindings) {
+                NavigationStack {
+                    KeyBindingsView()
+                        .navigationTitle("Key Bindings")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Done") { showKeyBindings = false }
+                            }
+                        }
+                }
+            }
+            .sheet(isPresented: $showAbout) {
+                NavigationStack {
+                    AboutView()
+                        .navigationTitle("About")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Done") { showAbout = false }
+                            }
+                        }
+                }
+            }
+            // Hardware keyboard shortcuts (iPad with keyboard)
+            .onKeyPress(.rightArrow) { manager.next(); return .handled }
+            .onKeyPress(.downArrow) { manager.next(); return .handled }
+            .onKeyPress(.space) { manager.next(); return .handled }
+            .onKeyPress(.leftArrow) { manager.previous(); return .handled }
+            .onKeyPress(.upArrow) { manager.previous(); return .handled }
+            .onKeyPress("l") { manager.next(); return .handled }
+            .onKeyPress("k") { manager.previous(); return .handled }
+            .onKeyPress("s") { manager.cycleSplitMode(); return .handled }
+            .onKeyPress("b") { manager.isBlank.toggle(); return .handled }
+            .onKeyPress("h") { showKeyBindings.toggle(); return .handled }
+            .focusable()
+            .focusEffectDisabled()
         }
     }
 }
+
+// MARK: - External Display (iPad → projector/TV via AirPlay or USB-C)
+
+@Observable
+final class ExternalDisplayObserver {
+    static let shared = ExternalDisplayObserver()
+    private var additionalWindow: UIWindow?
+    private weak var manager: SlideManager?
+
+    func start(manager: SlideManager) {
+        self.manager = manager
+
+        // Check for existing external scenes
+        for scene in UIApplication.shared.connectedScenes {
+            if let windowScene = scene as? UIWindowScene,
+               windowScene.session.role == .windowExternalDisplayNonInteractive {
+                setupExternalWindow(on: windowScene)
+            }
+        }
+
+        // Observe new scenes connecting
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(sceneDidConnect),
+            name: UIScene.didActivateNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(sceneDidDisconnect),
+            name: UIScene.didDisconnectNotification,
+            object: nil
+        )
+    }
+
+    @objc private func sceneDidConnect(_ notification: Notification) {
+        guard let windowScene = notification.object as? UIWindowScene,
+              windowScene.session.role == .windowExternalDisplayNonInteractive else { return }
+        setupExternalWindow(on: windowScene)
+    }
+
+    @objc private func sceneDidDisconnect(_ notification: Notification) {
+        guard let windowScene = notification.object as? UIWindowScene,
+              windowScene.session.role == .windowExternalDisplayNonInteractive else { return }
+        additionalWindow?.isHidden = true
+        additionalWindow = nil
+    }
+
+    private func setupExternalWindow(on scene: UIWindowScene) {
+        guard let manager else { return }
+        let projectorView = ProjectorView(manager: manager)
+        let hosting = UIHostingController(rootView: projectorView)
+        hosting.view.backgroundColor = .black
+
+        let window = UIWindow(windowScene: scene)
+        window.rootViewController = hosting
+        window.isHidden = false
+        additionalWindow = window
+    }
+}
+
+// Environment key for external display (future use)
+private struct ExternalDisplayManagerKey: EnvironmentKey {
+    static let defaultValue = ExternalDisplayObserver.shared
+}
+
+extension EnvironmentValues {
+    var externalDisplayManager: ExternalDisplayObserver {
+        get { self[ExternalDisplayManagerKey.self] }
+        set { self[ExternalDisplayManagerKey.self] = newValue }
+    }
+}
+
 #endif
