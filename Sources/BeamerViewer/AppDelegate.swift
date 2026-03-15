@@ -5,6 +5,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let slideManager = SlideManager()
     private var presenterWindow: PresenterWindowController?
     private var projectorWindow: ProjectorWindowController?
+    private var keyBindingsWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupMenuBar()
@@ -91,23 +92,82 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     @objc private func showKeyBindings() {
-        let alert = NSAlert()
-        alert.messageText = "Key Bindings"
-        alert.informativeText = """
-        →/↓/Space/PgDn    Next slide
-        ←/↑/PgUp          Previous slide
-        Home               First slide
-        End                Last slide
-        g                  Go to slide (type number + Enter)
-        s                  Cycle split: none → right → left
-        b                  Blank/unblank projector
-        p                  Pause/resume timer
-        r                  Reset timer
-        f                  Toggle projector fullscreen
-        Esc/q              Quit
-        """
-        alert.alertStyle = .informational
-        alert.runModal()
+        // Toggle — close if already visible
+        if let win = keyBindingsWindow, win.isVisible {
+            win.close()
+            keyBindingsWindow = nil
+            return
+        }
+
+        let bindings: [(String, String)] = [
+            ("→  ↓  Space  j  l", "Next slide"),
+            ("←  ↑  PgUp", "Previous slide"),
+            ("PgDn", "Next slide"),
+            ("Home", "First slide"),
+            ("End", "Last slide"),
+            ("g + number + Enter", "Go to slide"),
+            ("s", "Cycle split mode"),
+            ("b", "Blank/unblank projector"),
+            ("p", "Pause/resume timer"),
+            ("r", "Reset timer"),
+            ("f", "Toggle projector fullscreen"),
+            ("h", "Toggle this help"),
+            ("Esc  q", "Quit"),
+        ]
+
+        // Build two-column grid using NSGridView
+        let mono = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
+        let bold = NSFont.monospacedSystemFont(ofSize: 13, weight: .bold)
+        let keyColor = NSColor.labelColor
+        let labelColor = NSColor.secondaryLabelColor
+
+        var rows: [[NSView]] = []
+        for (key, action) in bindings {
+            let keyLabel = NSTextField(labelWithString: key)
+            keyLabel.font = bold
+            keyLabel.textColor = keyColor
+            keyLabel.backgroundColor = .clear
+            keyLabel.isBezeled = false
+
+            let actionLabel = NSTextField(labelWithString: action)
+            actionLabel.font = mono
+            actionLabel.textColor = labelColor
+            actionLabel.backgroundColor = .clear
+            actionLabel.isBezeled = false
+
+            rows.append([keyLabel, actionLabel])
+        }
+
+        let grid = NSGridView(views: rows)
+        grid.column(at: 0).xPlacement = .leading
+        grid.column(at: 1).xPlacement = .leading
+        grid.columnSpacing = 24
+        grid.rowSpacing = 6
+        grid.setContentHuggingPriority(.required, for: .horizontal)
+        grid.setContentHuggingPriority(.required, for: .vertical)
+        let gridSize = grid.fittingSize
+
+        let padding: CGFloat = 20
+        let winWidth = gridSize.width + padding * 2
+        let winHeight = gridSize.height + padding * 2 + 30
+        grid.frame = NSRect(x: padding, y: padding, width: gridSize.width, height: gridSize.height)
+
+        let win = NSPanel(
+            contentRect: NSRect(x: 0, y: 0, width: winWidth, height: winHeight),
+            styleMask: [.titled, .closable, .utilityWindow],
+            backing: .buffered,
+            defer: false
+        )
+        win.title = "Key Bindings"
+        win.isFloatingPanel = true
+        win.becomesKeyOnlyIfNeeded = true
+        win.isOpaque = true
+        win.backgroundColor = .windowBackgroundColor
+        win.contentView?.addSubview(grid)
+        win.center()
+        win.orderFront(nil)
+
+        keyBindingsWindow = win
     }
 
     // MARK: - File Opening
@@ -183,7 +243,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         // If we're accumulating a slide number for "go to"
         if !pendingGoTo.isEmpty {
             if event.keyCode == 36 { // Enter
-                if let num = Int(pendingGoTo) {
+                if let num = Int(pendingGoTo.trimmingCharacters(in: .whitespaces)) {
                     slideManager.goTo(index: num - 1) // 1-indexed for user
                     projectorWindow?.updateSlide()
                 }
@@ -230,11 +290,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         // Character-based shortcuts
         guard let chars = event.characters else { return event }
         switch chars {
+        case "j", "l":
+            slideManager.next()
+            projectorWindow?.updateSlide()
+            return nil
+        case "h":
+            showKeyBindings()
+            return nil
         case "g":
-            pendingGoTo = ""
-            pendingGoTo = "" // Start accumulating digits
-            // Need a visual indicator — for now just start collecting
-            pendingGoTo = ""
+            pendingGoTo = " " // sentinel to start collecting digits
             return nil
         case "b":
             projectorWindow?.toggleBlank()

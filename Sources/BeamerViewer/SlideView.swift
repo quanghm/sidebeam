@@ -10,16 +10,13 @@ final class SlideView: NSView {
 
     override func draw(_ dirtyRect: NSRect) {
         let ctx = NSGraphicsContext.current?.cgContext
-        NSColor.black.setFill()
+        NSColor.controlBackgroundColor.setFill()
         ctx?.fill(bounds)
 
         guard let page = pdfPage,
               let context = ctx else {
             return
         }
-
-        NSColor.black.setFill()
-        context.fill(bounds)
 
         let pageRect = page.bounds(for: .mediaBox)
         let sourceRect = cropRect ?? pageRect
@@ -48,5 +45,12 @@ final class SlideView: NSView {
         page.draw(with: .mediaBox, to: context)
 
         context.restoreGState()
+
+        // Draw border around the rendered page area
+        let pageFrame = NSRect(x: offsetX, y: offsetY, width: scaledWidth, height: scaledHeight)
+        NSColor.separatorColor.setStroke()
+        let borderPath = NSBezierPath(roundedRect: pageFrame, xRadius: 2, yRadius: 2)
+        borderPath.lineWidth = 1
+        borderPath.stroke()
     }
 }

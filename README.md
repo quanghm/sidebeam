@@ -9,12 +9,22 @@ Automatically splits wide Beamer pages (produced by `\setbeameroption{show notes
 - **Presenter window**: current slide, next slide preview, rendered notes, elapsed timer
 - **Projector window**: fullscreen on external display, or windowed on single screen
 - **Beamer page splitting**: auto-detects wide pages and splits slide/notes halves
-- **Keyboard-driven** navigation
+- **Keyboard-driven** navigation with vim-style bindings
+- **Key bindings help overlay** (`h` to toggle)
+- **Light/dark mode** support — adapts to macOS appearance
 
 ## Requirements
 
 - macOS 13+
 - Swift 5.9+
+
+## Install
+
+Download the latest `.app` from [Releases](https://github.com/quanghm/beamer-viewer/releases), unzip, and run:
+
+```bash
+xattr -cr BeamerViewer.app   # remove quarantine on first run
+```
 
 ## Build & Run
 
@@ -29,11 +39,18 @@ Or without arguments to open a file picker:
 swift run BeamerViewer
 ```
 
+To build a `.app` bundle:
+
+```bash
+bash scripts/build-app.sh 0.0.2
+open .build/BeamerViewer.app
+```
+
 ## Key Bindings
 
 | Key | Action |
 |---|---|
-| `→` `↓` `Space` `PgDn` | Next slide |
+| `→` `↓` `Space` `PgDn` `j` `l` | Next slide |
 | `←` `↑` `PgUp` | Previous slide |
 | `Home` | First slide |
 | `End` | Last slide |
@@ -43,13 +60,15 @@ swift run BeamerViewer
 | `p` | Pause/resume timer |
 | `r` | Reset timer |
 | `f` | Toggle projector fullscreen |
-| `q` | Quit |
+| `h` | Toggle key bindings help |
+| `Esc` `q` | Quit |
 
 ## TODO
 
 - [ ] Sidecar `.notes.md` file support — per-slide Markdown notes rendered in the presenter view
 - [ ] Markdown rendering for notes (rich text, lists, code blocks, emphasis)
 - [ ] Fallback to sidecar notes when split mode is `none` (regular PDFs)
+- [ ] App icon
 
 ## Beamer Setup
 

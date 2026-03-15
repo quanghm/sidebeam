@@ -24,7 +24,7 @@ final class PresenterWindowController: NSWindowController {
         )
         window.title = "Beamer Viewer — Presenter"
         window.minSize = NSSize(width: 800, height: 500)
-        window.backgroundColor = NSColor(white: 0.15, alpha: 1)
+        window.backgroundColor = .windowBackgroundColor
 
         super.init(window: window)
         setupLayout()
@@ -76,12 +76,12 @@ final class PresenterWindowController: NSWindowController {
 
         timerLabel.translatesAutoresizingMaskIntoConstraints = false
         timerLabel.font = NSFont.monospacedDigitSystemFont(ofSize: 36, weight: .medium)
-        timerLabel.textColor = .white
+        timerLabel.textColor = .labelColor
         bottomBar.addSubview(timerLabel)
 
         slideCountLabel.translatesAutoresizingMaskIntoConstraints = false
         slideCountLabel.font = NSFont.monospacedDigitSystemFont(ofSize: 24, weight: .regular)
-        slideCountLabel.textColor = NSColor(white: 0.7, alpha: 1)
+        slideCountLabel.textColor = .secondaryLabelColor
         slideCountLabel.alignment = .right
         bottomBar.addSubview(slideCountLabel)
 
@@ -177,10 +177,10 @@ final class PresenterWindowController: NSWindowController {
             timer?.invalidate()
             timer = nil
             timerRunning = false
-            timerLabel.textColor = NSColor.systemYellow
+            timerLabel.textColor = .systemYellow
         } else {
             startTimer()
-            timerLabel.textColor = .white
+            timerLabel.textColor = .labelColor
         }
     }
 
