@@ -161,7 +161,23 @@ final class ProjectorWindowManager: NSObject {
         isCustomFullscreen = true
         // Hide menu bar on the projector screen
         NSApp.presentationOptions = [.autoHideMenuBar, .autoHideDock]
-        NSApp.mainWindow?.makeKeyAndOrderFront(nil)
+
+        // Move presenter to primary screen if it's behind the projector
+        let screens = NSScreen.screens
+        if let mainWindow = NSApp.mainWindow, let primary = screens.first, screens.count > 1 {
+            let presenterFrame = mainWindow.frame
+            if !primary.visibleFrame.intersects(presenterFrame) {
+                let primaryFrame = primary.visibleFrame
+                mainWindow.setFrame(
+                    NSRect(x: primaryFrame.origin.x + 50,
+                           y: primaryFrame.origin.y + 50,
+                           width: min(presenterFrame.width, primaryFrame.width - 100),
+                           height: min(presenterFrame.height, primaryFrame.height - 100)),
+                    display: true
+                )
+            }
+            mainWindow.makeKeyAndOrderFront(nil)
+        }
     }
 
     func toggleFullscreen() {
