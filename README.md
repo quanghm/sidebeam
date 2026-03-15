@@ -1,6 +1,6 @@
 # Beamer Viewer
 
-Native macOS PDF presenter console, inspired by [pdfpc](https://pdfpc.github.io/). Built with Swift/AppKit and PDFKit.
+Native macOS/iOS PDF presenter console, inspired by [pdfpc](https://pdfpc.github.io/). Built with SwiftUI and PDFKit.
 
 Automatically splits wide Beamer pages (produced by `\setbeameroption{show notes on second screen=right}`) into slide and notes halves.
 
@@ -10,12 +10,14 @@ Automatically splits wide Beamer pages (produced by `\setbeameroption{show notes
 - **Projector window**: fullscreen on external display, or windowed on single screen
 - **Beamer page splitting**: auto-detects wide pages and splits slide/notes halves
 - **Keyboard-driven** navigation with vim-style bindings
-- **Key bindings help overlay** (`h` to toggle)
-- **Light/dark mode** support — adapts to macOS appearance
+- **Key bindings help overlay** (`h` to toggle, `Esc` to close)
+- **Welcome screen** with file picker (`⌘O`)
+- **Light/dark mode** support — adapts to system appearance
+- **SwiftUI views** — cross-platform, portable to iPad
 
 ## Requirements
 
-- macOS 13+
+- macOS 14+ / iOS 17+
 - Swift 5.9+
 
 ## Install
@@ -42,7 +44,7 @@ swift run BeamerViewer
 To build a `.app` bundle:
 
 ```bash
-bash scripts/build-app.sh 0.0.2
+bash scripts/build-app.sh
 open .build/BeamerViewer.app
 ```
 
@@ -61,7 +63,25 @@ open .build/BeamerViewer.app
 | `r` | Reset timer |
 | `f` | Toggle projector fullscreen |
 | `h` | Toggle key bindings help |
-| `Esc` `q` | Quit |
+| `Esc` | Close help / cancel go-to |
+| `q` | Quit |
+
+## Architecture
+
+```
+Sources/BeamerViewer/
+├── BeamerViewerApp.swift   # SwiftUI App + AppKit window/keyboard managers (macOS)
+├── SlideManager.swift      # @Observable: PDF loading, navigation, split logic
+├── SlideView.swift         # SwiftUI Canvas: PDF page rendering with crop
+├── PresenterView.swift     # SwiftUI: current slide, next, notes, timer
+├── ProjectorView.swift     # SwiftUI: fullscreen slide for projector
+├── WelcomeView.swift       # SwiftUI: file picker landing screen
+├── KeyBindingsView.swift   # SwiftUI: help overlay
+├── AboutView.swift         # SwiftUI: about dialog
+└── Info.plist              # App bundle metadata
+```
+
+All views are SwiftUI and cross-platform (macOS + iOS). Window management and keyboard handling use AppKit on macOS for reliability.
 
 ## TODO
 
@@ -69,6 +89,7 @@ open .build/BeamerViewer.app
 - [ ] Markdown rendering for notes (rich text, lists, code blocks, emphasis)
 - [ ] Fallback to sidecar notes when split mode is `none` (regular PDFs)
 - [ ] App icon
+- [ ] iPad support with external display
 
 ## Beamer Setup
 

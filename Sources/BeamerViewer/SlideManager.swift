@@ -1,7 +1,8 @@
-import AppKit
+import Foundation
 import PDFKit
 
 /// Manages PDF loading, Beamer page splitting, and navigation state.
+@Observable
 final class SlideManager {
     enum SplitMode: String { case none, right, left }
 
@@ -9,8 +10,7 @@ final class SlideManager {
     private(set) var pageCount = 0
     private(set) var currentIndex = 0
     var splitMode: SplitMode = .none
-
-    var onSlideChanged: (() -> Void)?
+    var isBlank = false
 
     // MARK: - Loading
 
@@ -23,11 +23,9 @@ final class SlideManager {
         // Auto-detect split mode from aspect ratio
         if let firstPage = doc.page(at: 0) {
             let bounds = firstPage.bounds(for: .mediaBox)
-            // Beamer with notes produces ~2:1 aspect ratio pages
             splitMode = bounds.width > bounds.height * 1.8 ? .right : .none
         }
 
-        onSlideChanged?()
         return true
     }
 
@@ -37,7 +35,6 @@ final class SlideManager {
         let clamped = max(0, min(index, pageCount - 1))
         guard clamped != currentIndex else { return }
         currentIndex = clamped
-        onSlideChanged?()
     }
 
     func next() { goTo(index: currentIndex + 1) }
@@ -49,17 +46,14 @@ final class SlideManager {
 
     var isSplit: Bool { splitMode != .none }
 
-    /// Cycle: none → right → left → none
     func cycleSplitMode() {
         switch splitMode {
         case .none:  splitMode = .right
         case .right: splitMode = .left
         case .left:  splitMode = .none
         }
-        onSlideChanged?()
     }
 
-    /// Returns the slide portion rect for a given page.
     func slideRect(for pageIndex: Int) -> CGRect? {
         guard isSplit, let page = pdfDocument?.page(at: pageIndex) else { return nil }
         let bounds = page.bounds(for: .mediaBox)
@@ -71,7 +65,6 @@ final class SlideManager {
         }
     }
 
-    /// Returns the notes portion rect for a given page.
     func notesRect(for pageIndex: Int) -> CGRect? {
         guard isSplit, let page = pdfDocument?.page(at: pageIndex) else { return nil }
         let bounds = page.bounds(for: .mediaBox)
@@ -86,5 +79,4 @@ final class SlideManager {
     func page(at index: Int) -> PDFPage? {
         pdfDocument?.page(at: index)
     }
-
 }

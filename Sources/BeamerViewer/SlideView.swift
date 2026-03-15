@@ -1,56 +1,49 @@
-import AppKit
+import SwiftUI
 import PDFKit
 
-/// Renders a cropped portion of a PDFPage.
-final class SlideView: NSView {
-    var pdfPage: PDFPage? { didSet { needsDisplay = true } }
-    var cropRect: CGRect? { didSet { needsDisplay = true } } // nil = full page
+/// Renders a cropped portion of a PDFPage with a border around the page content.
+struct SlideView: View {
+    let pdfPage: PDFPage?
+    let cropRect: CGRect?
 
-    override var isFlipped: Bool { false }
+    var body: some View {
+        Canvas { context, size in
+            // Background
+            context.fill(Path(CGRect(origin: .zero, size: size)), with: .color(.gray.opacity(0.1)))
 
-    override func draw(_ dirtyRect: NSRect) {
-        let ctx = NSGraphicsContext.current?.cgContext
-        NSColor.controlBackgroundColor.setFill()
-        ctx?.fill(bounds)
+            guard let page = pdfPage else { return }
 
-        guard let page = pdfPage,
-              let context = ctx else {
-            return
+            let pageRect = page.bounds(for: .mediaBox)
+            let sourceRect = cropRect ?? pageRect
+
+            let scaleX = size.width / sourceRect.width
+            let scaleY = size.height / sourceRect.height
+            let scale = min(scaleX, scaleY)
+
+            let scaledWidth = sourceRect.width * scale
+            let scaledHeight = sourceRect.height * scale
+            let offsetX = (size.width - scaledWidth) / 2
+            let offsetY = (size.height - scaledHeight) / 2
+
+            // Render PDF page
+            context.drawLayer { ctx in
+                ctx.withCGContext { cgContext in
+                    cgContext.saveGState()
+                    // Flip + position for PDF coordinate system
+                    cgContext.translateBy(x: offsetX, y: offsetY + scaledHeight)
+                    cgContext.scaleBy(x: scale, y: -scale)
+                    cgContext.translateBy(x: -sourceRect.origin.x, y: -sourceRect.origin.y)
+                    cgContext.clip(to: sourceRect)
+                    page.draw(with: .mediaBox, to: cgContext)
+                    cgContext.restoreGState()
+                }
+            }
+
+            // Border around the rendered page area
+            let pageFrame = CGRect(x: offsetX, y: offsetY, width: scaledWidth, height: scaledHeight)
+            context.stroke(Path(roundedRect: pageFrame, cornerRadius: 2),
+                          with: .color(.gray.opacity(0.3)),
+                          lineWidth: 1)
         }
-
-        let pageRect = page.bounds(for: .mediaBox)
-        let sourceRect = cropRect ?? pageRect
-
-        // Calculate scaling to fit the view while maintaining aspect ratio
-        let scaleX = bounds.width / sourceRect.width
-        let scaleY = bounds.height / sourceRect.height
-        let scale = min(scaleX, scaleY)
-
-        let scaledWidth = sourceRect.width * scale
-        let scaledHeight = sourceRect.height * scale
-        let offsetX = (bounds.width - scaledWidth) / 2
-        let offsetY = (bounds.height - scaledHeight) / 2
-
-        context.saveGState()
-
-        // Move to centered position, scale, then translate to crop origin
-        context.translateBy(x: offsetX, y: offsetY)
-        context.scaleBy(x: scale, y: scale)
-        context.translateBy(x: -sourceRect.origin.x, y: -sourceRect.origin.y)
-
-        // Clip to the source rect
-        context.clip(to: sourceRect)
-
-        // PDFPage.draw draws at the page's mediaBox origin
-        page.draw(with: .mediaBox, to: context)
-
-        context.restoreGState()
-
-        // Draw border around the rendered page area
-        let pageFrame = NSRect(x: offsetX, y: offsetY, width: scaledWidth, height: scaledHeight)
-        NSColor.separatorColor.setStroke()
-        let borderPath = NSBezierPath(roundedRect: pageFrame, xRadius: 2, yRadius: 2)
-        borderPath.lineWidth = 1
-        borderPath.stroke()
     }
 }
