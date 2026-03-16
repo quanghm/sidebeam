@@ -117,13 +117,14 @@ All views are SwiftUI and cross-platform (macOS + iOS). Window management and ke
 
 Build with Xcode — select iPad target and run (⌘R).
 
-## TODO
+## Roadmap (Pro)
 
-- [ ] Sidecar `.notes.md` file support — per-slide Markdown notes rendered in the presenter view
-- [ ] Markdown rendering for notes (rich text, lists, code blocks, emphasis)
-- [ ] Fallback to sidecar notes when split mode is `none` (regular PDFs)
-- [ ] iPad single-screen mode — toggle between presenter and fullscreen slide view
-- [ ] Localization (String Catalog)
+See [SideBeam Pro](https://github.com/quanghm/sidebeam-pro) for premium features:
+- Countdown timer with alerts
+- Sidecar markdown notes
+- Cloud integration (Google Drive / OneDrive)
+- Slide annotations
+- Localization
 
 ## Beamer Setup
 
