@@ -1,5 +1,7 @@
 # SideBeam
 
+[![License: BSL 1.1](https://img.shields.io/badge/License-BSL%201.1-blue.svg)](LICENSE)
+
 Native macOS/iOS PDF presenter console, inspired by [pdfpc](https://pdfpc.github.io/). Built with SwiftUI and PDFKit.
 
 Automatically splits wide Beamer pages (produced by `\setbeameroption{show notes on second screen=right}`) into slide and notes halves.
