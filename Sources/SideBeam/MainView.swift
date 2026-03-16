@@ -11,12 +11,12 @@ struct MainView: View {
     var projectorManager: ProjectorWindowManager
     #endif
     var onClose: (() -> Void)?
-    var onToggleFullscreen: (() -> Void)?
+    var onToggleProjector: (() -> Void)?
 
     var body: some View {
         Group {
             if hasDocument {
-                PresenterView(manager: manager, onClose: onClose, onToggleFullscreen: onToggleFullscreen)
+                PresenterView(manager: manager, onClose: onClose, onToggleProjector: onToggleProjector)
             } else {
                 WelcomeView { url in
                     openDocument(url: url)

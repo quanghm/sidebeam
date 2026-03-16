@@ -11,6 +11,7 @@ final class SlideManager {
     private(set) var currentIndex = 0
     var splitMode: SplitMode = .none
     var isBlank = false
+    var isSlideFullscreen = false
 
     // MARK: - Loading
 
@@ -20,6 +21,7 @@ final class SlideManager {
         currentIndex = 0
         splitMode = .none
         isBlank = false
+        isSlideFullscreen = false
     }
 
     func load(url: URL) -> Bool {

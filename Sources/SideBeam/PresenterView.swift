@@ -4,7 +4,7 @@ import PDFKit
 struct PresenterView: View {
     var manager: SlideManager
     var onClose: (() -> Void)?
-    var onToggleFullscreen: (() -> Void)?
+    var onToggleProjector: (() -> Void)?
     @State private var elapsedSeconds = 0
     @State private var timerRunning = false
     @State private var timerPaused = false
@@ -12,23 +12,27 @@ struct PresenterView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            HStack(spacing: 8) {
-                // Current slide — left 60%
+            if manager.isSlideFullscreen {
+                // Slide-only mode — current slide fills the space
                 currentSlide
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-                // Right panel — next slide + notes
-                VStack(spacing: 8) {
-                    nextSlide
+            } else {
+                // Full presenter layout
+                HStack(spacing: 8) {
+                    currentSlide
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                    notesView
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    VStack(spacing: 8) {
+                        nextSlide
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                        notesView
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                    .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: .infinity)
             }
 
-            // Bottom bar
             bottomBar
         }
         .padding(8)
@@ -100,7 +104,6 @@ struct PresenterView: View {
                     ? Double(manager.currentIndex) / Double(manager.pageCount - 1)
                     : 0
                 ZStack {
-                    // Thin progress bar behind
                     VStack {
                         Spacer()
                         ZStack(alignment: .leading) {
@@ -114,7 +117,6 @@ struct PresenterView: View {
                         Spacer()
                     }
 
-                    // Slide counter pill on top, centered on the bar
                     Text("\(manager.currentIndex + 1) / \(manager.pageCount)")
                         .font(.system(size: 20, weight: .bold, design: .monospaced))
                         .foregroundStyle(.primary)
@@ -149,16 +151,18 @@ struct PresenterView: View {
             }
             .buttonStyle(.plain)
 
-            if let onToggleFullscreen {
-                Button(action: onToggleFullscreen) {
-                    Image(systemName: "rectangle.inset.filled.and.person.filled")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.accentColor)
-                        .frame(width: 32, height: 32)
-                        .background(Circle().strokeBorder(Color.accentColor.opacity(0.3), lineWidth: 1))
-                }
-                .buttonStyle(.plain)
+            // Toggle slide fullscreen / presenter layout
+            Button {
+                manager.isSlideFullscreen.toggle()
+                onToggleProjector?()
+            } label: {
+                Image(systemName: manager.isSlideFullscreen ? "rectangle.split.2x1" : "rectangle.inset.filled.and.person.filled")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.accentColor)
+                    .frame(width: 32, height: 32)
+                    .background(Circle().strokeBorder(Color.accentColor.opacity(0.3), lineWidth: 1))
             }
+            .buttonStyle(.plain)
 
             if let onClose {
                 Button(action: onClose) {

@@ -23,7 +23,7 @@ struct SideBeamApp: App {
                 hasDocument: $hasDocument,
                 projectorManager: projectorManager,
                 onClose: { closePresentation() },
-                onToggleFullscreen: { projectorManager.toggleFullscreen() }
+                onToggleProjector: { projectorManager.toggleFullscreen() }
             )
             .onAppear {
                 // Disable window state restoration
@@ -306,7 +306,10 @@ final class KeyboardManager {
         case "g": pendingGoTo = " "; return nil
         case "b": manager.isBlank.toggle(); return nil
         case "s": manager.cycleSplitMode(); return nil
-        case "f": projectorManager?.toggleFullscreen(); return nil
+        case "f":
+            manager.isSlideFullscreen.toggle()
+            projectorManager?.toggleFullscreen()
+            return nil
         case "q": NSApp.terminate(nil); return nil
         default: return event
         }
