@@ -58,7 +58,8 @@ public struct PresenterView: View {
                 .onEnded { value in
                     if value.translation.width < -50 { manager.next() }
                     else if value.translation.width > 50 { manager.previous() }
-                }
+                },
+            isEnabled: !manager.isInteractionOverridden
         )
         #endif
         .onAppear { startTimer() }

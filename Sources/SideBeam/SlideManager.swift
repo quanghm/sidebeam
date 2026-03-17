@@ -12,6 +12,7 @@ public final class SlideManager {
     public var splitMode: SplitMode = .none
     public var isBlank = false
     public var isSlideFullscreen = false
+    public var isInteractionOverridden = false  // Pro features can suppress default gestures
 
     public init() {}
 
@@ -24,7 +25,12 @@ public final class SlideManager {
         splitMode = .none
         isBlank = false
         isSlideFullscreen = false
+        isInteractionOverridden = false
+        onCloseCallbacks.forEach { $0() }
     }
+
+    /// Pro features register cleanup callbacks here.
+    public var onCloseCallbacks: [() -> Void] = []
 
     public func load(url: URL) -> Bool {
         let accessing = url.startAccessingSecurityScopedResource()

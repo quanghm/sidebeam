@@ -37,7 +37,13 @@ public struct MainView: View {
     }
 
     public var body: some View {
-        Group {
+        ZStack {
+            WelcomeView { url in
+                openDocument(url: url)
+            }
+            .opacity(hasDocument ? 0 : 1)
+            .allowsHitTesting(!hasDocument)
+
             if hasDocument {
                 PresenterView(
                     manager: manager,
@@ -46,12 +52,10 @@ public struct MainView: View {
                     slideOverlay: slideOverlay,
                     extraToolbarButtons: extraToolbarButtons
                 )
-            } else {
-                WelcomeView { url in
-                    openDocument(url: url)
-                }
+                .transition(.identity)
             }
         }
+        .animation(nil, value: hasDocument)
         #if os(macOS)
         .onReceive(NotificationCenter.default.publisher(for: .sidebeamOpenRecentFile)) { notification in
             if let url = notification.object as? URL {
