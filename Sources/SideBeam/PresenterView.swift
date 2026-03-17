@@ -1,16 +1,32 @@
 import SwiftUI
 import PDFKit
 
-struct PresenterView: View {
-    var manager: SlideManager
-    var onClose: (() -> Void)?
-    var onToggleProjector: (() -> Void)?
+public struct PresenterView: View {
+    public var manager: SlideManager
+    public var onClose: (() -> Void)?
+    public var onToggleProjector: (() -> Void)?
+    public var slideOverlay: AnyView?
+    public var extraToolbarButtons: AnyView?
     @State private var elapsedSeconds = 0
     @State private var timerRunning = false
     @State private var timerPaused = false
     @State private var timer: Timer?
 
-    var body: some View {
+    public init(
+        manager: SlideManager,
+        onClose: (() -> Void)? = nil,
+        onToggleProjector: (() -> Void)? = nil,
+        slideOverlay: AnyView? = nil,
+        extraToolbarButtons: AnyView? = nil
+    ) {
+        self.manager = manager
+        self.onClose = onClose
+        self.onToggleProjector = onToggleProjector
+        self.slideOverlay = slideOverlay
+        self.extraToolbarButtons = extraToolbarButtons
+    }
+
+    public var body: some View {
         VStack(spacing: 8) {
             if manager.isSlideFullscreen {
                 // Slide-only mode — current slide fills the space
@@ -52,10 +68,13 @@ struct PresenterView: View {
     // MARK: - Subviews
 
     private var currentSlide: some View {
-        SlideView(
-            pdfPage: manager.page(at: manager.currentIndex),
-            cropRect: manager.isSplit ? manager.slideRect(for: manager.currentIndex) : nil
-        )
+        ZStack {
+            SlideView(
+                pdfPage: manager.page(at: manager.currentIndex),
+                cropRect: manager.isSplit ? manager.slideRect(for: manager.currentIndex) : nil
+            )
+            if let slideOverlay { slideOverlay }
+        }
     }
 
     private var nextSlide: some View {
@@ -151,6 +170,9 @@ struct PresenterView: View {
             }
             .buttonStyle(.plain)
 
+            // Pro extension point — extra toolbar buttons (e.g. annotations)
+            if let extraToolbarButtons { extraToolbarButtons }
+
             // Toggle slide fullscreen / presenter layout
             Button {
                 manager.isSlideFullscreen.toggle()
@@ -201,7 +223,7 @@ struct PresenterView: View {
         timerRunning = false
     }
 
-    func toggleTimer() {
+    public func toggleTimer() {
         if timerRunning {
             timer?.invalidate()
             timer = nil
@@ -212,7 +234,7 @@ struct PresenterView: View {
         }
     }
 
-    func resetTimer() {
+    public func resetTimer() {
         elapsedSeconds = 0
     }
 }

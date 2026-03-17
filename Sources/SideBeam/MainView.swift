@@ -2,21 +2,50 @@ import SwiftUI
 import PDFKit
 import Combine
 
-/// A single persistent view that switches between welcome and presenter content.
-/// Never removed from the view hierarchy, preventing window destruction issues.
-struct MainView: View {
-    var manager: SlideManager
-    @Binding var hasDocument: Bool
-    #if os(macOS)
-    var projectorManager: ProjectorWindowManager
-    #endif
-    var onClose: (() -> Void)?
-    var onToggleProjector: (() -> Void)?
+/// Notification names for cross-component communication.
+public extension Notification.Name {
+    static let sidebeamOpenRecentFile = Notification.Name("sidebeam.openRecentFile")
+    static let sidebeamClosePresentation = Notification.Name("sidebeam.closePresentation")
+}
 
-    var body: some View {
+/// A single persistent view that switches between welcome and presenter content.
+public struct MainView: View {
+    public var manager: SlideManager
+    @Binding public var hasDocument: Bool
+    public var onClose: (() -> Void)?
+    public var onToggleProjector: (() -> Void)?
+    public var onDocumentLoaded: (() -> Void)?
+    public var slideOverlay: AnyView?
+    public var extraToolbarButtons: AnyView?
+
+    public init(
+        manager: SlideManager,
+        hasDocument: Binding<Bool>,
+        onClose: (() -> Void)? = nil,
+        onToggleProjector: (() -> Void)? = nil,
+        onDocumentLoaded: (() -> Void)? = nil,
+        slideOverlay: AnyView? = nil,
+        extraToolbarButtons: AnyView? = nil
+    ) {
+        self.manager = manager
+        self._hasDocument = hasDocument
+        self.onClose = onClose
+        self.onToggleProjector = onToggleProjector
+        self.onDocumentLoaded = onDocumentLoaded
+        self.slideOverlay = slideOverlay
+        self.extraToolbarButtons = extraToolbarButtons
+    }
+
+    public var body: some View {
         Group {
             if hasDocument {
-                PresenterView(manager: manager, onClose: onClose, onToggleProjector: onToggleProjector)
+                PresenterView(
+                    manager: manager,
+                    onClose: onClose,
+                    onToggleProjector: onToggleProjector,
+                    slideOverlay: slideOverlay,
+                    extraToolbarButtons: extraToolbarButtons
+                )
             } else {
                 WelcomeView { url in
                     openDocument(url: url)
@@ -24,7 +53,7 @@ struct MainView: View {
             }
         }
         #if os(macOS)
-        .onReceive(NotificationCenter.default.publisher(for: .openRecentFile)) { notification in
+        .onReceive(NotificationCenter.default.publisher(for: .sidebeamOpenRecentFile)) { notification in
             if let url = notification.object as? URL {
                 openDocument(url: url)
             }
@@ -37,14 +66,7 @@ struct MainView: View {
         }
         .onChange(of: hasDocument) { _, newValue in
             if newValue {
-                #if os(macOS)
-                projectorManager.open(manager: manager)
-                if NSScreen.screens.count > 1 {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        projectorManager.fullscreenOnScreen(NSScreen.screens[1])
-                    }
-                }
-                #endif
+                onDocumentLoaded?()
             }
         }
     }
@@ -57,7 +79,6 @@ struct MainView: View {
             RecentFiles.shared.add(url: url)
             hasDocument = true
         } else {
-            // Remove stale entry and show error
             RecentFiles.shared.removeByPath(url.path)
             errorFile = url.lastPathComponent
             showError = true

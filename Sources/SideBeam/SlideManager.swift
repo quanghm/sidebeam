@@ -3,19 +3,21 @@ import PDFKit
 
 /// Manages PDF loading, Beamer page splitting, and navigation state.
 @Observable
-final class SlideManager {
-    enum SplitMode: String { case none, right, left }
+public final class SlideManager {
+    public enum SplitMode: String { case none, right, left }
 
-    private(set) var pdfDocument: PDFDocument?
-    private(set) var pageCount = 0
-    private(set) var currentIndex = 0
-    var splitMode: SplitMode = .none
-    var isBlank = false
-    var isSlideFullscreen = false
+    public private(set) var pdfDocument: PDFDocument?
+    public private(set) var pageCount = 0
+    public private(set) var currentIndex = 0
+    public var splitMode: SplitMode = .none
+    public var isBlank = false
+    public var isSlideFullscreen = false
+
+    public init() {}
 
     // MARK: - Loading
 
-    func reset() {
+    public func reset() {
         pdfDocument = nil
         pageCount = 0
         currentIndex = 0
@@ -24,7 +26,7 @@ final class SlideManager {
         isSlideFullscreen = false
     }
 
-    func load(url: URL) -> Bool {
+    public func load(url: URL) -> Bool {
         let accessing = url.startAccessingSecurityScopedResource()
         defer { if accessing { url.stopAccessingSecurityScopedResource() } }
 
@@ -46,22 +48,22 @@ final class SlideManager {
 
     // MARK: - Navigation
 
-    func goTo(index: Int) {
+    public func goTo(index: Int) {
         let clamped = max(0, min(index, pageCount - 1))
         guard clamped != currentIndex else { return }
         currentIndex = clamped
     }
 
-    func next() { goTo(index: currentIndex + 1) }
-    func previous() { goTo(index: currentIndex - 1) }
-    func goToFirst() { goTo(index: 0) }
-    func goToLast() { goTo(index: pageCount - 1) }
+    public func next() { goTo(index: currentIndex + 1) }
+    public func previous() { goTo(index: currentIndex - 1) }
+    public func goToFirst() { goTo(index: 0) }
+    public func goToLast() { goTo(index: pageCount - 1) }
 
     // MARK: - Page Rects
 
-    var isSplit: Bool { splitMode != .none }
+    public var isSplit: Bool { splitMode != .none }
 
-    func cycleSplitMode() {
+    public func cycleSplitMode() {
         switch splitMode {
         case .none:  splitMode = .right
         case .right: splitMode = .left
@@ -69,7 +71,7 @@ final class SlideManager {
         }
     }
 
-    func slideRect(for pageIndex: Int) -> CGRect? {
+    public func slideRect(for pageIndex: Int) -> CGRect? {
         guard isSplit, let page = pdfDocument?.page(at: pageIndex) else { return nil }
         let bounds = page.bounds(for: .mediaBox)
         let half = bounds.width / 2
@@ -80,7 +82,7 @@ final class SlideManager {
         }
     }
 
-    func notesRect(for pageIndex: Int) -> CGRect? {
+    public func notesRect(for pageIndex: Int) -> CGRect? {
         guard isSplit, let page = pdfDocument?.page(at: pageIndex) else { return nil }
         let bounds = page.bounds(for: .mediaBox)
         let half = bounds.width / 2
@@ -91,7 +93,7 @@ final class SlideManager {
         }
     }
 
-    func page(at index: Int) -> PDFPage? {
+    public func page(at index: Int) -> PDFPage? {
         pdfDocument?.page(at: index)
     }
 }

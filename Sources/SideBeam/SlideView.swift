@@ -2,11 +2,16 @@ import SwiftUI
 import PDFKit
 
 /// Renders a cropped portion of a PDFPage with a border around the page content.
-struct SlideView: View {
-    let pdfPage: PDFPage?
-    let cropRect: CGRect?
+public struct SlideView: View {
+    public let pdfPage: PDFPage?
+    public let cropRect: CGRect?
 
-    var body: some View {
+    public init(pdfPage: PDFPage?, cropRect: CGRect?) {
+        self.pdfPage = pdfPage
+        self.cropRect = cropRect
+    }
+
+    public var body: some View {
         Canvas { context, size in
             // Background
             // Transparent background — inherits from parent

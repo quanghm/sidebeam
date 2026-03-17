@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct HelpView: View {
+public struct HelpView: View {
     @State private var selectedTab = 0
 
     private let tabs: [(String, String)] = [
@@ -10,7 +10,9 @@ struct HelpView: View {
         ("Support", "heart"),
     ]
 
-    var body: some View {
+    public init() {}
+
+    public var body: some View {
         TabView(selection: $selectedTab) {
             GettingStartedTab()
                 .tabItem { Label(tabs[0].0, systemImage: tabs[0].1) }

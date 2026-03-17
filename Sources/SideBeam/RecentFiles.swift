@@ -1,21 +1,28 @@
 import Foundation
 
 @Observable
-final class RecentFiles {
-    static let shared = RecentFiles()
+public final class RecentFiles {
+    public static let shared = RecentFiles()
     private let key = "recentFiles"
     private let maxCount = 10
 
-    private(set) var files: [RecentFile] = []
+    public private(set) var files: [RecentFile] = []
 
-    struct RecentFile: Codable, Identifiable {
-        let name: String
-        let date: Date
-        let bookmark: Data?  // security-scoped bookmark for iOS
-        let path: String     // display path / macOS direct path
-        var id: String { path }
+    public struct RecentFile: Codable, Identifiable {
+        public let name: String
+        public let date: Date
+        public let bookmark: Data?  // security-scoped bookmark for iOS
+        public let path: String     // display path / macOS direct path
+        public var id: String { path }
 
-        var url: URL? {
+        public init(name: String, date: Date, bookmark: Data?, path: String) {
+            self.name = name
+            self.date = date
+            self.bookmark = bookmark
+            self.path = path
+        }
+
+        public var url: URL? {
             #if os(iOS)
             guard let bookmark else { return nil }
             var isStale = false
@@ -30,7 +37,7 @@ final class RecentFiles {
             #endif
         }
 
-        var exists: Bool {
+        public var exists: Bool {
             #if os(iOS)
             return url != nil
             #else
@@ -39,11 +46,11 @@ final class RecentFiles {
         }
     }
 
-    init() {
+    public init() {
         load()
     }
 
-    func add(url: URL) {
+    public func add(url: URL) {
         let bookmark: Data?
         #if os(iOS)
         let accessing = url.startAccessingSecurityScopedResource()
@@ -65,17 +72,17 @@ final class RecentFiles {
         save()
     }
 
-    func removeByPath(_ path: String) {
+    public func removeByPath(_ path: String) {
         files.removeAll { $0.path == path }
         save()
     }
 
-    func remove(at offsets: IndexSet) {
+    public func remove(at offsets: IndexSet) {
         files.remove(atOffsets: offsets)
         save()
     }
 
-    func clear() {
+    public func clear() {
         files.removeAll()
         save()
     }

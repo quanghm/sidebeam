@@ -1,11 +1,13 @@
 import SwiftUI
 
-struct AboutView: View {
+public struct AboutView: View {
     private var version: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "dev"
     }
 
-    var body: some View {
+    public init() {}
+
+    public var body: some View {
         VStack(spacing: 12) {
             Image(systemName: "doc.richtext")
                 .font(.system(size: 48))

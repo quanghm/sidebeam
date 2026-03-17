@@ -1,0 +1,12 @@
+title: SideBeam
+description: Native macOS/iOS PDF presenter console for Beamer slides
+theme: minima
+url: https://quanghm.github.io
+baseurl: /sidebeam
+
+header_pages:
+  - index.md
+  - getting-started.md
+  - key-bindings.md
+  - beamer-setup.md
+  - support.md

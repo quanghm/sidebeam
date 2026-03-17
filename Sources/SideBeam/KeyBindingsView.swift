@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct KeyBindingsView: View {
+public struct KeyBindingsView: View {
     private let bindings: [(String, String)] = [
         ("→  ↓  Space  l  PgDn", "Next slide"),
         ("←  ↑  k  PgUp", "Previous slide"),
@@ -18,7 +18,9 @@ struct KeyBindingsView: View {
         ("q", "Quit"),
     ]
 
-    var body: some View {
+    public init() {}
+
+    public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Key Bindings")
                 .font(.headline)

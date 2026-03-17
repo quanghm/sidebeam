@@ -1,18 +1,27 @@
 import SwiftUI
 import PDFKit
 
-struct ProjectorView: View {
-    var manager: SlideManager
+public struct ProjectorView: View {
+    public var manager: SlideManager
+    public var slideOverlay: AnyView?
 
-    var body: some View {
+    public init(manager: SlideManager, slideOverlay: AnyView? = nil) {
+        self.manager = manager
+        self.slideOverlay = slideOverlay
+    }
+
+    public var body: some View {
         Group {
             if manager.isBlank {
                 Color.black
             } else {
-                SlideView(
-                    pdfPage: manager.page(at: manager.currentIndex),
-                    cropRect: manager.isSplit ? manager.slideRect(for: manager.currentIndex) : nil
-                )
+                ZStack {
+                    SlideView(
+                        pdfPage: manager.page(at: manager.currentIndex),
+                        cropRect: manager.isSplit ? manager.slideRect(for: manager.currentIndex) : nil
+                    )
+                    if let slideOverlay { slideOverlay }
+                }
             }
         }
         .background(.black)

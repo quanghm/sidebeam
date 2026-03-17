@@ -1,14 +1,18 @@
 import SwiftUI
 
-struct WelcomeView: View {
-    var onOpen: (URL) -> Void
+public struct WelcomeView: View {
+    public var onOpen: (URL) -> Void
 
     @State private var showFilePicker = false
     @State private var showHelp = false
     @State private var showSponsor = false
-    var recentFiles = RecentFiles.shared
+    public var recentFiles = RecentFiles.shared
 
-    var body: some View {
+    public init(onOpen: @escaping (URL) -> Void) {
+        self.onOpen = onOpen
+    }
+
+    public var body: some View {
         VStack(spacing: 0) {
             HStack {
                 Button {
