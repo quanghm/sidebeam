@@ -13,27 +13,33 @@ public struct MainView: View {
     public var manager: SlideManager
     @Binding public var hasDocument: Bool
     public var onClose: (() -> Void)?
-    public var onToggleProjector: (() -> Void)?
+    public var onShowProjector: (() -> Void)?
+    public var onHideProjector: (() -> Void)?
     public var onDocumentLoaded: (() -> Void)?
     public var slideOverlay: AnyView?
     public var extraToolbarButtons: AnyView?
+    public var extraMenuItems: AnyView?
 
     public init(
         manager: SlideManager,
         hasDocument: Binding<Bool>,
         onClose: (() -> Void)? = nil,
-        onToggleProjector: (() -> Void)? = nil,
+        onShowProjector: (() -> Void)? = nil,
+        onHideProjector: (() -> Void)? = nil,
         onDocumentLoaded: (() -> Void)? = nil,
         slideOverlay: AnyView? = nil,
-        extraToolbarButtons: AnyView? = nil
+        extraToolbarButtons: AnyView? = nil,
+        extraMenuItems: AnyView? = nil
     ) {
         self.manager = manager
         self._hasDocument = hasDocument
         self.onClose = onClose
-        self.onToggleProjector = onToggleProjector
+        self.onShowProjector = onShowProjector
+        self.onHideProjector = onHideProjector
         self.onDocumentLoaded = onDocumentLoaded
         self.slideOverlay = slideOverlay
         self.extraToolbarButtons = extraToolbarButtons
+        self.extraMenuItems = extraMenuItems
     }
 
     public var body: some View {
@@ -48,9 +54,11 @@ public struct MainView: View {
                 PresenterView(
                     manager: manager,
                     onClose: onClose,
-                    onToggleProjector: onToggleProjector,
+                    onShowProjector: onShowProjector,
+                    onHideProjector: onHideProjector,
                     slideOverlay: slideOverlay,
-                    extraToolbarButtons: extraToolbarButtons
+                    extraToolbarButtons: extraToolbarButtons,
+                    extraMenuItems: extraMenuItems
                 )
                 .transition(.identity)
             }

@@ -5,13 +5,19 @@ import PDFKit
 @Observable
 public final class SlideManager {
     public enum SplitMode: String { case none, right, left }
+    public enum ViewMode: String {
+        case rehearse   // Full layout: slide + next + notes, no projector
+        case focus      // Slide only, no projector
+        case mirror     // Slide only + projector fullscreen
+        case sideBeam   // Full layout + projector fullscreen
+    }
 
     public private(set) var pdfDocument: PDFDocument?
-    public private(set) var pageCount = 0
+    public private(set) var pageCount = 0	
     public private(set) var currentIndex = 0
     public var splitMode: SplitMode = .none
     public var isBlank = false
-    public var isSlideFullscreen = false
+    public var viewMode: ViewMode = .sideBeam
     public var isInteractionOverridden = false  // Pro features can suppress default gestures
 
     public init() {}
@@ -24,7 +30,7 @@ public final class SlideManager {
         currentIndex = 0
         splitMode = .none
         isBlank = false
-        isSlideFullscreen = false
+        viewMode = .sideBeam
         isInteractionOverridden = false
         onCloseCallbacks.forEach { $0() }
     }
@@ -68,6 +74,25 @@ public final class SlideManager {
     // MARK: - Page Rects
 
     public var isSplit: Bool { splitMode != .none }
+
+    /// Cycle view modes. On single-screen iPad, skip dual-view modes (sideBeam, mirror).
+    public func cycleViewMode(hasExternalDisplay: Bool = true) {
+        if hasExternalDisplay {
+            switch viewMode {
+            case .sideBeam: viewMode = .rehearse
+            case .rehearse: viewMode = .focus
+            case .focus:    viewMode = .mirror
+            case .mirror:   viewMode = .sideBeam
+            }
+        } else {
+            // Single screen: only rehearse ↔ focus
+            switch viewMode {
+            case .rehearse: viewMode = .focus
+            case .focus:    viewMode = .rehearse
+            default:        viewMode = .rehearse
+            }
+        }
+    }
 
     public func cycleSplitMode() {
         switch splitMode {
